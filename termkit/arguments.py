@@ -23,9 +23,7 @@ class _TermkitArgument:
 
 
 class Positional(_TermkitArgument):
-    def __init__(
-        self, type: Optional[type] = str, help: Optional[str] = None, metavar: Optional[str] = None
-    ):
+    def __init__(self, type: Optional[type] = str, help: Optional[str] = None, metavar: Optional[str] = None):
         self.type = type
         self.help = help
         self.metavar = metavar

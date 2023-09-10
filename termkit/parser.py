@@ -26,6 +26,7 @@ class TermkitParser(argparse.ArgumentParser):
 class ArgumentHandler:
     def __init__(self, parser: argparse.ArgumentParser, func: typing.Callable):
         self.parser = parser
+        self._func = func
         self.parameters = inspect.signature(func).parameters
 
     def parse(self, param_name: str):
@@ -51,14 +52,14 @@ class ArgumentHandler:
                 if param.annotation in __BUILTIN_TYPES__:
                     self._populate_implicit_positional(param_name, param_type)
                 elif isinstance(param.annotation, _TermkitArgument):
-                    param.annotation._populate(self.parser, param_name)
+                    raise SyntaxError("Termkit argument cannot be set from annotation")
 
             # f(param : <annotation> = <default>)
             else:
                 if param.annotation in __BUILTIN_TYPES__:
                     self._populate_implicit_option(param_name, param_type)
                 elif isinstance(param.annotation, _TermkitArgument):
-                    param.annotation._populate(self.parser, param_name)
+                    raise SyntaxError("Termkit argument cannot be set from annotation")
                 elif isinstance(param.default, _TermkitArgument):
                     param.default._populate(self.parser, param_name)
 
@@ -91,11 +92,11 @@ class ArgumentHandler:
                 if param.annotation in __BUILTIN_TYPES__:
                     return param.annotation
                 elif isinstance(param.annotation, _TermkitArgument):
-                    return param.annotation.type
+                    raise SyntaxError("Termkit argument cannot be set from annotation")
 
             # f(param : <annotation> = <default>)
             else:
                 if param.annotation in __BUILTIN_TYPES__:
                     return param.annotation
                 elif isinstance(param.annotation, _TermkitArgument):
-                    return param.annotation.type
+                    raise SyntaxError("Termkit argument cannot be set from annotation")

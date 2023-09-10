@@ -116,7 +116,7 @@ class TestCore(TestCase):
         stdout = textwrap.dedent(
             """\
         usage: my-app [-h] COMMAND ...
-        
+
         Options:
           -h, --help  show this help message and exit
 

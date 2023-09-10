@@ -12,7 +12,7 @@ import os
 import sys
 import typing
 
-from termkit.parser import TermkitParser, ArgumentHandler
+from termkit.parser import ArgumentHandler, TermkitParser
 from termkit.utils import filter_args
 
 
@@ -41,12 +41,6 @@ class _Command(_TermkitComponent):
             self.help = ""
 
     def _populate(self, parser: argparse.ArgumentParser):
-        parser.add_argument(
-            "_TERMKIT_COMMAND",
-            action="store_const",
-            const=self.callback,
-            help=argparse.SUPPRESS,
-        )
         argument_handler = ArgumentHandler(parser, self.callback)
         for param_name in argument_handler.parameters.keys():
             argument_handler.parse(param_name)
@@ -55,6 +49,7 @@ class _Command(_TermkitComponent):
 class Termkit(_TermkitComponent):
     def __init__(self, name: str = os.path.basename(sys.argv[0]), description: typing.Optional[str] = None):
         self._childs = []
+        self._callbacks = []
         self._parser = TermkitParser(prog=name, description=description)
         self._populated = False
 
@@ -88,21 +83,57 @@ class Termkit(_TermkitComponent):
 
         return decorator
 
+    def add_callback(self, func: typing.Callable):
+        if inspect.isfunction(func):
+            self._callbacks.append(_Command(func, func.__name__ + "_CALLBACK"))
+        else:
+            raise ValueError(f"Cannot add '{func}' as callback, function is required.")
+
+    def callback(self):
+        def decorator(func: typing.Callable):
+            self.add_callback(func)
+            return func
+
+        return decorator
+
     def _populate(self, parser: argparse.ArgumentParser):
-        if len(self._childs) > 0 and not self._populated:
-            sub_parser = parser.add_subparsers(title="Commands", metavar="COMMAND")
-            for child in self._childs:
-                command_parser = sub_parser.add_parser(
-                    name=child.name, help=child.single_line_help, description=child.help
+        if not self._populated:
+            if len(self._callbacks) > 0:
+                parser.add_argument(
+                    "_TERMKIT_CALLBACKS", action="store_const", const=self._callbacks, help=argparse.SUPPRESS
                 )
-                child._populate(command_parser)
+                for callback in self._callbacks:
+                    callback._populate(parser)
+
+            if len(self._childs) > 0:
+                sub_parser = parser.add_subparsers(title="Commands", metavar="COMMAND")
+                for child in self._childs:
+                    command_parser = sub_parser.add_parser(
+                        name=child.name, help=child.single_line_help, description=child.help
+                    )
+                    if isinstance(child, _Command):
+                        parser.add_argument(
+                            "_TERMKIT_COMMAND",
+                            action="store_const",
+                            const=child.callback,
+                            help=argparse.SUPPRESS,
+                        )
+                    if isinstance(child, Termkit):
+                        child._callbacks = self._callbacks + child._callbacks
+
+                    child._populate(command_parser)
+
         self._populated = True
 
     def __call__(self, *args, **kwargs):
         self._populate(self._parser)
         arguments = self._parser.parse_args()
 
+        if hasattr(arguments, "_TERMKIT_CALLBACKS"):
+            for callback in arguments._TERMKIT_CALLBACKS:
+                callback.callback(**filter_args(arguments, callback.callback))
+
         if hasattr(arguments, "_TERMKIT_COMMAND"):
-            arguments._TERMKIT_COMMAND(**filter_args(arguments))
+            arguments._TERMKIT_COMMAND(**filter_args(arguments, arguments._TERMKIT_COMMAND))
 
         sys.exit(0)

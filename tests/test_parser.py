@@ -7,7 +7,7 @@ import argparse
 import textwrap
 from unittest import TestCase
 
-from termkit.arguments import Positional, Option
+from termkit.arguments import Option, Positional
 from termkit.core import Termkit
 from termkit.parser import ArgumentHandler
 from termkit.tests import TermkitRunner
@@ -77,8 +77,7 @@ class TestArgumentHandler(TestCase):
         app = Termkit("app-name")
 
         @app.command()
-        def func(value: Positional(),
-                 value2: Positional(help="With custom help")):
+        def func(value=Positional(), value2=Positional(help="With custom help")):
             ...
 
         runner = TermkitRunner(app)
@@ -103,8 +102,9 @@ class TestArgumentHandler(TestCase):
         app = Termkit("app-name")
 
         @app.command()
-        def func(value: Option('-v', '--value'),
-                 value2: Option('-b', help="With custom help", required=True, metavar="STR")):
+        def func(
+            value=Option("-v", "--value"), value2=Option("-b", help="With custom help", required=True, metavar="STR")
+        ):
             ...
 
         runner = TermkitRunner(app)
