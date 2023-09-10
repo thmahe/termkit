@@ -19,3 +19,22 @@ class TestCore(TestCase):
             app()
 
         self.assertEqual("Hello World\n", stdout.getvalue())
+
+    def test_add(self):
+        def dummy_command():
+            ...
+
+        app = Termkit()
+        sub_app = Termkit()
+        app.add(sub_app)
+        app.add(dummy_command)
+
+        class Complex:
+            ...
+
+        with self.assertRaises(TypeError) as e:
+            app.add(Complex)
+        self.assertEqual(
+            ("Cannot add object of type <class 'type'> to termkit.Termkit.",),
+            e.exception.args,
+        )
