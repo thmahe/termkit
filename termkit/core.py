@@ -47,7 +47,13 @@ class _Command(_TermkitComponent):
 
 
 class Termkit(_TermkitComponent):
-    def __init__(self, name: str = os.path.basename(sys.argv[0]), description: typing.Optional[str] = None):
+    def __init__(
+        self,
+        name: str = os.path.basename(sys.argv[0]),
+        description: typing.Optional[str] = None,
+        callbacks: typing.Optional[typing.List[typing.Callable]] = None,
+        childs: typing.Optional[typing.Dict] = None,
+    ):
         self._childs = []
         self._callbacks = []
         self._parser = TermkitParser(prog=name, description=description)
@@ -55,6 +61,14 @@ class Termkit(_TermkitComponent):
 
         self.name = name
         self.help = description if description is not None else ""
+
+        if callbacks is not None and isinstance(callbacks, typing.Iterable):
+            for callback in callbacks:
+                self.add_callback(callback)
+
+        if childs is not None and isinstance(childs, typing.Dict):
+            for child_name, callback_or_app in childs.items():
+                self.add(callback_or_app, child_name)
 
     @property
     def _child_names(self):
