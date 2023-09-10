@@ -41,7 +41,10 @@ class _Command(_TermkitComponent):
 
     def _populate(self, parser: argparse.ArgumentParser):
         parser.add_argument(
-            "_TERMKIT_CALLBACK", action="store_const", const=self.callback, help="CONST " + self.callback.__name__
+            "_TERMKIT_COMMAND",
+            action="store_const",
+            const=self.callback,
+            help=argparse.SUPPRESS,
         )
 
 
@@ -93,5 +96,9 @@ class Termkit(_TermkitComponent):
 
     def __call__(self, *args, **kwargs):
         self._populate(self._parser)
-        self._parser.parse_args()
+        arguments = self._parser.parse_args()
+
+        if hasattr(arguments, "_TERMKIT_COMMAND"):
+            arguments._TERMKIT_COMMAND(**filter_args(arguments))
+
         sys.exit(0)

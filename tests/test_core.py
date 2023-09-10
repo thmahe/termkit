@@ -87,11 +87,8 @@ class TestCore(TestCase):
             """\
         usage: my-app command [-h]
 
-        Positionals:
-          _TERMKIT_CALLBACK  CONST command
-
         Options:
-          -h, --help         show this help message and exit
+          -h, --help  show this help message and exit
         """
         )
 
@@ -162,11 +159,8 @@ class TestCore(TestCase):
         First line from docstring
         Second line from docstring
 
-        Positionals:
-          _TERMKIT_CALLBACK  CONST func
-
         Options:
-          -h, --help         show this help message and exit
+          -h, --help  show this help message and exit
         """
         )
 
