@@ -7,6 +7,8 @@ import argparse
 import inspect
 import typing
 
+from termkit.arguments import _TermkitArgument
+
 __BUILTIN_TYPES__ = [str, int, float, complex, bool]
 
 
@@ -39,6 +41,8 @@ class ArgumentHandler:
             else:
                 if type(param.default) in __BUILTIN_TYPES__:
                     self._populate_implicit_option(param_name, param_type)
+                elif isinstance(param.default, _TermkitArgument):
+                    param.default._populate(self.parser, param_name)
 
         # f(param : <annotation> (= <default>))
         else:
@@ -46,11 +50,17 @@ class ArgumentHandler:
             if param.default is inspect.Parameter.empty:
                 if param.annotation in __BUILTIN_TYPES__:
                     self._populate_implicit_positional(param_name, param_type)
+                elif isinstance(param.annotation, _TermkitArgument):
+                    param.annotation._populate(self.parser, param_name)
 
             # f(param : <annotation> = <default>)
             else:
                 if param.annotation in __BUILTIN_TYPES__:
                     self._populate_implicit_option(param_name, param_type)
+                elif isinstance(param.annotation, _TermkitArgument):
+                    param.annotation._populate(self.parser, param_name)
+                elif isinstance(param.default, _TermkitArgument):
+                    param.default._populate(self.parser, param_name)
 
     def _populate_implicit_positional(self, param_name: str, param_type: type):
         self.parser.add_argument(param_name, type=param_type)
@@ -71,6 +81,8 @@ class ArgumentHandler:
             else:
                 if type(param.default) in __BUILTIN_TYPES__:
                     return type(param.default)
+                elif isinstance(param.default, _TermkitArgument):
+                    return param.default.type
 
         # f(param : <annotation> (= ...))
         else:
@@ -78,8 +90,12 @@ class ArgumentHandler:
             if param.default is inspect.Parameter.empty:
                 if param.annotation in __BUILTIN_TYPES__:
                     return param.annotation
+                elif isinstance(param.annotation, _TermkitArgument):
+                    return param.annotation.type
 
             # f(param : <annotation> = <default>)
             else:
                 if param.annotation in __BUILTIN_TYPES__:
                     return param.annotation
+                elif isinstance(param.annotation, _TermkitArgument):
+                    return param.annotation.type
