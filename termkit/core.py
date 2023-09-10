@@ -12,7 +12,8 @@ import os
 import sys
 import typing
 
-from termkit.parser import TermkitParser
+from termkit.parser import TermkitParser, ArgumentHandler
+from termkit.utils import filter_args
 
 
 class _TermkitComponent:
@@ -46,6 +47,9 @@ class _Command(_TermkitComponent):
             const=self.callback,
             help=argparse.SUPPRESS,
         )
+        argument_handler = ArgumentHandler(parser, self.callback)
+        for param_name in argument_handler.parameters.keys():
+            argument_handler.parse(param_name)
 
 
 class Termkit(_TermkitComponent):
