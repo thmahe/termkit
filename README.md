@@ -27,7 +27,7 @@ To get started, follow these steps:
 
 #### 1. Install Termkit using pip
 ```shell
-$ pip install termkit --pre
+$ pip install termkit
 ```
 #### 2. Test it with given example
 

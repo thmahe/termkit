@@ -3,7 +3,7 @@
 
 [tool.poetry]
 name = "termkit"
-version = "0.1.0a0"
+version = "0.1.5"
 description = "Python command line application framework"
 authors = ["Thomas Mahé <contact@tmahe.dev>"]
 license = "MIT"
