@@ -3,22 +3,16 @@ Copyright 2023, Thomas Mahé <contact@tmahe.dev>
 SPDX-License-Identifier: MIT
 """
 
+import textwrap
 from unittest import TestCase
 
 from termkit.core import Termkit
+from termkit.tests import TermkitRunner
 
 
 class TestCore(TestCase):
     def test_name(self):
         self.assertEqual("app-name", Termkit("app-name").name)
-
-    def test_call(self):
-        app = Termkit("test")
-        stdout = io.StringIO()
-        with contextlib.redirect_stdout(stdout):
-            app()
-
-        self.assertEqual("Hello World\n", stdout.getvalue())
 
     def test_add_termkit_sub_app(self):
         app = Termkit()
@@ -59,3 +53,123 @@ class TestCore(TestCase):
             ("Cannot add object of type '<class 'type'>' to Termkit application.",),
             e.exception.args,
         )
+
+    def test_standalone_app_helper(self):
+        app = Termkit("my-app")
+        runner = TermkitRunner(app)
+
+        @app.command()
+        @app.command("command-2")
+        def command():
+            ...
+
+        runner.run("--help")
+
+        stdout = textwrap.dedent(
+            """\
+        usage: my-app [-h] COMMAND ...
+
+        Options:
+          -h, --help  show this help message and exit
+
+        Commands:
+          COMMAND
+            command-2
+            command
+        """
+        )
+
+        self.assertEqual(stdout, runner.captured_output)
+
+        runner.run("command", "--help")
+
+        stdout = textwrap.dedent(
+            """\
+        usage: my-app command [-h]
+
+        Positionals:
+          _TERMKIT_CALLBACK  CONST command
+
+        Options:
+          -h, --help         show this help message and exit
+        """
+        )
+
+        self.assertEqual(stdout, runner.captured_output)
+        self.assertEqual(0, runner.exit_code)
+        self.assertEqual(SystemExit, type(runner.exception))
+
+    def test_sub_app_helper(self):
+        app = Termkit("my-app")
+        second_app = Termkit("sub-app", description="First line help\nSecond line help")
+        app.add(second_app)
+
+        @second_app.command()
+        def func():
+            """
+            First line from docstring
+            Second line from docstring
+            """
+            ...
+
+        runner = TermkitRunner(app)
+
+        runner.run("--help")
+
+        stdout = textwrap.dedent(
+            """\
+        usage: my-app [-h] COMMAND ...
+        
+        Options:
+          -h, --help  show this help message and exit
+
+        Commands:
+          COMMAND
+            sub-app   First line help
+        """
+        )
+
+        self.assertEqual(stdout, runner.captured_output)
+
+        runner.run("sub-app", "--help")
+
+        stdout = textwrap.dedent(
+            """\
+        usage: my-app sub-app [-h] COMMAND ...
+
+        First line help
+        Second line help
+
+        Options:
+          -h, --help  show this help message and exit
+
+        Commands:
+          COMMAND
+            func      First line from docstring
+        """
+        )
+
+        self.assertEqual(stdout, runner.captured_output)
+        self.assertEqual(0, runner.exit_code)
+        self.assertEqual(SystemExit, type(runner.exception))
+
+        runner.run("sub-app", "func", "--help")
+
+        stdout = textwrap.dedent(
+            """\
+        usage: my-app sub-app func [-h]
+
+        First line from docstring
+        Second line from docstring
+
+        Positionals:
+          _TERMKIT_CALLBACK  CONST func
+
+        Options:
+          -h, --help         show this help message and exit
+        """
+        )
+
+        self.assertEqual(stdout, runner.captured_output)
+        self.assertEqual(0, runner.exit_code)
+        self.assertEqual(SystemExit, type(runner.exception))
