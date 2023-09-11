@@ -126,7 +126,7 @@ class Termkit(_TermkitComponent):
                         name=child.name, help=child.single_line_help, description=child.help
                     )
                     if isinstance(child, _Command):
-                        parser.add_argument(
+                        command_parser.add_argument(
                             "_TERMKIT_COMMAND",
                             action="store_const",
                             const=child.callback,
@@ -142,7 +142,6 @@ class Termkit(_TermkitComponent):
     def __call__(self, *args, **kwargs):
         self._populate(self._parser)
         arguments = self._parser.parse_args()
-
         if hasattr(arguments, "_TERMKIT_CALLBACKS"):
             for callback in arguments._TERMKIT_CALLBACKS:
                 callback.callback(**filter_args(arguments, callback.callback))
