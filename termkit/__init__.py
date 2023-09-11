@@ -6,5 +6,5 @@ The following imports are designed to provide convenient access to frequently us
 These imports help streamline the code and improve readability by reducing the need to prefix module names.
 """
 
-from termkit.arguments import Option, Positional  # noqa: F401
+from termkit.arguments import Flag, Option, Positional  # noqa: F401
 from termkit.core import Termkit  # noqa: F401
