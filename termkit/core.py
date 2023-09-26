@@ -1,3 +1,4 @@
+# PYTHON_ARGCOMPLETE_OK
 """
 Copyright 2023, Thomas Mahé <contact@tmahe.dev>
 SPDX-License-Identifier: MIT
@@ -14,6 +15,13 @@ import typing
 
 from termkit.parser import ArgumentHandler, TermkitParser
 from termkit.utils import filter_args
+
+try:
+    import argcomplete
+
+    __ARGCOMPLETE__ = True
+except ImportError:
+    __ARGCOMPLETE__ = False
 
 
 class _TermkitComponent:
@@ -141,6 +149,8 @@ class Termkit(_TermkitComponent):
 
     def __call__(self, *args, **kwargs):
         self._populate(self._parser)
+        if __ARGCOMPLETE__:
+            argcomplete.autocomplete(self._parser)
         arguments = self._parser.parse_args()
         if hasattr(arguments, "_TERMKIT_CALLBACKS"):
             for callback in arguments._TERMKIT_CALLBACKS:
