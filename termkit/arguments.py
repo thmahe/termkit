@@ -8,9 +8,11 @@ import typing
 from abc import abstractmethod
 from typing import Optional
 
+from termkit.groups import _TermkitGroup, get_parser_from_group
+
 
 class _TermkitArgument:
-    _ignored_params = ["flags"]
+    _ignored_params = ["flags", "group"]
 
     @abstractmethod
     def _populate(self, parser: argparse.ArgumentParser, dest: str):
@@ -43,7 +45,8 @@ class Option(_TermkitArgument):
         help: Optional[str] = None,
         metavar: Optional[str] = None,
         required: bool = False,
-        default: Optional[typing.Any] = None
+        default: Optional[typing.Any] = None,
+        group: Optional[_TermkitGroup] = None
     ):
         self.flags = flags
         self.type = type
@@ -51,18 +54,27 @@ class Option(_TermkitArgument):
         self.metavar = metavar
         self.required = required
         self.default = default
+        self.group = group
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str):
+        parser = get_parser_from_group(parser, self.group)
         parser.add_argument(*self.flags, **self.argparse_params, dest=dest)
 
 
 class Flag(_TermkitArgument):
-    _ignored_params = ["flags", "type"]
+    _ignored_params = ["flags", "type", "group"]
 
-    def __init__(self, *flags: str, help: Optional[str] = None, store: Optional[typing.Any] = True):
+    def __init__(
+        self,
+        *flags: str,
+        help: Optional[str] = None,
+        store: Optional[typing.Any] = True,
+        group: Optional[_TermkitGroup] = None
+    ):
         self.flags = flags
         self.type = None
         self.help = help
+        self.group = group
         if store is True:
             self.action = "store_true"
         if store is False:
@@ -72,4 +84,5 @@ class Flag(_TermkitArgument):
             self.const = store
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str):
+        parser = get_parser_from_group(parser, self.group)
         parser.add_argument(*self.flags, **self.argparse_params, dest=dest)
