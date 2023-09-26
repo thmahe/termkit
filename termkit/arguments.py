@@ -28,10 +28,17 @@ class _TermkitArgument:
 
 
 class Positional(_TermkitArgument):
-    def __init__(self, type: Optional[type] = str, help: Optional[str] = None, metavar: Optional[str] = None):
+    def __init__(
+        self,
+        type: Optional[type] = str,
+        help: Optional[str] = None,
+        metavar: Optional[str] = None,
+        nargs: Optional[typing.Union[int, str]] = None,
+    ):
         self.type = type
         self.help = help
         self.metavar = metavar
+        self.nargs = nargs
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str):
         parser.add_argument(dest, **self.argparse_params)
@@ -46,10 +53,12 @@ class Option(_TermkitArgument):
         metavar: Optional[str] = None,
         required: bool = False,
         default: Optional[typing.Any] = None,
-        group: Optional[_TermkitGroup] = None
+        group: Optional[_TermkitGroup] = None,
+        nargs: Optional[typing.Union[int, str]] = None,
     ):
         self.flags = flags
         self.type = type
+        self.nargs = nargs
         self.help = help
         self.metavar = metavar
         self.required = required
@@ -69,7 +78,7 @@ class Flag(_TermkitArgument):
         *flags: str,
         help: Optional[str] = None,
         store: Optional[typing.Any] = True,
-        group: Optional[_TermkitGroup] = None
+        group: Optional[_TermkitGroup] = None,
     ):
         self.flags = flags
         self.type = None
