@@ -20,7 +20,7 @@ class _TermkitArgument:
 
     @property
     def argparse_params(self):
-        out = self.__dict__
+        out = self.__dict__.copy()
         for item in self._ignored_params:
             if item in out.keys():
                 del out[item]
