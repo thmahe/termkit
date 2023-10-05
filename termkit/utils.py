@@ -23,7 +23,7 @@ def filter_args(ns: argparse.Namespace, callback: typing.Callable) -> typing.Dic
 def strip_doc(doc: str) -> str:
     out = []
     for line in doc.splitlines():
-        if line[0] == ":":
+        if len(line) > 0 and line[0] == ":":
             break
         out.append(line)
     return "\n".join(out)
