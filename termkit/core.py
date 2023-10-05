@@ -71,6 +71,7 @@ class Termkit(_TermkitComponent):
 
         self.name = name
         self.help = description if description is not None else ""
+        self.ctx = dict()
 
         if callbacks is not None and isinstance(callbacks, typing.Iterable):
             for callback in callbacks:
@@ -87,6 +88,7 @@ class Termkit(_TermkitComponent):
     def add(self, app_or_command: typing.Union[Termkit, typing.Callable], name: typing.Optional[str] = None):
         if isinstance(app_or_command, Termkit):
             child = app_or_command
+            self.ctx.update({child.name: child.ctx})
         elif inspect.isfunction(app_or_command):
             child = _Command(app_or_command, name)
         else:
