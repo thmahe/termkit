@@ -18,3 +18,22 @@ def filter_args(ns: argparse.Namespace, callback: typing.Callable) -> typing.Dic
             if reserved_prefix in arg or arg not in params:
                 del out[arg]
     return out
+
+
+def strip_doc(doc: str) -> str:
+    out = []
+    for line in doc.splitlines():
+        if line[0] == ":":
+            break
+        out.append(line)
+    return "\n".join(out)
+
+
+def get_param_help(doc: str, dest: str) -> str:
+    if doc is None:
+        return ""
+    for line in doc.splitlines():
+        pre = f":param {dest}:"
+        if pre == line[: len(pre)]:
+            return line[len(pre) :].strip()
+    return ""

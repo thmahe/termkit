@@ -5,6 +5,7 @@ SPDX-License-Identifier: MIT
 
 import argparse
 import textwrap
+from typing import Annotated
 from unittest import TestCase
 
 from termkit.arguments import Option, Positional
@@ -77,7 +78,13 @@ class TestArgumentHandler(TestCase):
         app = Termkit("app-name")
 
         @app.command()
-        def func(value=Positional(), value2=Positional(help="With custom help")):
+        def func(value: Annotated[str, Positional()], value2: Annotated[str, Positional()]):
+            """
+
+            :param value:
+            :param value2: With custom help
+            :return:
+            """
             ...
 
         runner = TermkitRunner(app)
@@ -103,8 +110,15 @@ class TestArgumentHandler(TestCase):
 
         @app.command()
         def func(
-            value=Option("-v", "--value"), value2=Option("-b", help="With custom help", required=True, metavar="STR")
+            value: Annotated[str, Option("-v", "--value")],
+            value2: Annotated[str, Option("-b", required=True, metavar="STR")],
         ):
+            """
+
+            :param value:
+            :param value2: With custom help
+            :return:
+            """
             ...
 
         runner = TermkitRunner(app)

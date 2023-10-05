@@ -14,7 +14,7 @@ import sys
 import typing
 
 from termkit.parser import ArgumentHandler, TermkitParser
-from termkit.utils import filter_args
+from termkit.utils import filter_args, strip_doc
 
 try:
     import argcomplete
@@ -47,6 +47,8 @@ class _Command(_TermkitComponent):
         self.help = inspect.getdoc(callback)
         if self.help is None:
             self.help = ""
+
+        self.help = strip_doc(self.help)
 
     def _populate(self, parser: argparse.ArgumentParser):
         argument_handler = ArgumentHandler(parser, self.callback)
