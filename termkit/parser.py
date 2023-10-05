@@ -8,6 +8,7 @@ import inspect
 import typing
 
 from termkit.arguments import _TermkitArgument
+from termkit.formatters import TermkitDefaultFormatter
 from termkit.utils import get_param_help
 
 __BUILTIN_TYPES__ = [str, int, float, complex, bool]
@@ -21,7 +22,7 @@ class TermkitParser(argparse.ArgumentParser):
         self._positionals.title = "Positionals"
 
         if kwargs.get("formatter_class", None) is None:
-            self.formatter_class = argparse.RawTextHelpFormatter
+            self.formatter_class = TermkitDefaultFormatter
 
 
 class ArgumentHandler:

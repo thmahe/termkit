@@ -73,9 +73,8 @@ class TestCore(TestCase):
           -h, --help  show this help message and exit
 
         Commands:
-          COMMAND
-            command-2
-            command
+          command-2
+          command
         """
         )
 
@@ -121,8 +120,7 @@ class TestCore(TestCase):
           -h, --help  show this help message and exit
 
         Commands:
-          COMMAND
-            sub-app   First line help
+          sub-app .... First line help
         """
         )
 
@@ -141,8 +139,7 @@ class TestCore(TestCase):
           -h, --help  show this help message and exit
 
         Commands:
-          COMMAND
-            func      First line from docstring
+          func .... First line from docstring
         """
         )
 

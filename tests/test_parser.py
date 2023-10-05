@@ -129,9 +129,9 @@ class TestArgumentHandler(TestCase):
         usage: app-name func [-h] [-v VALUE] -b STR
 
         Options:
-          -h, --help            show this help message and exit
-          -v VALUE, --value VALUE
-          -b STR                With custom help
+          -h, --help         show this help message and exit
+          -v, --value VALUE
+          -b STR             With custom help
         """
         )
 
