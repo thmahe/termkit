@@ -110,7 +110,7 @@ class TestArgumentHandler(TestCase):
 
         @app.command()
         def func(
-            value: Annotated[str, Option("-v", "--value")],
+            value: Annotated[str, Option("--value", "-v")],
             value2: Annotated[str, Option("-b", required=True, metavar="STR")],
         ):
             """

@@ -71,7 +71,7 @@ class Option(_TermkitArgument):
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser = get_parser_from_group(parser, self.group)
-        parser.add_argument(*self.flags, **self.argparse_params, dest=dest, help=help)
+        parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help)
 
 
 class Flag(_TermkitArgument):
@@ -98,4 +98,4 @@ class Flag(_TermkitArgument):
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser = get_parser_from_group(parser, self.group)
-        parser.add_argument(*self.flags, **self.argparse_params, dest=dest, help=help)
+        parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help)
