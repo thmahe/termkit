@@ -12,7 +12,7 @@ from termkit.groups import _TermkitGroup, get_parser_from_group
 
 
 class _TermkitArgument:
-    _ignored_params = ["flags", "group"]
+    _ignored_params = ["flags", "group", "help"]
 
     @abstractmethod
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
@@ -34,11 +34,13 @@ class Positional(_TermkitArgument):
         metavar: Optional[str] = None,
         nargs: Optional[typing.Union[int, str]] = None,
         choices: Optional[typing.Container] = None,
+        help: Optional[str] = None,
     ):
         self.type = type
         self.metavar = metavar
         self.nargs = nargs
         self.choices = choices
+        self.help = help
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser.add_argument(dest, **self.argparse_params, help=help)
@@ -55,6 +57,7 @@ class Option(_TermkitArgument):
         group: Optional[_TermkitGroup] = None,
         nargs: Optional[typing.Union[int, str]] = None,
         choices: Optional[typing.Container] = None,
+        help: Optional[str] = None,
     ):
         self.flags = flags
         self.type = type
@@ -64,6 +67,7 @@ class Option(_TermkitArgument):
         self.default = default
         self.group = group
         self.choices = choices
+        self.help = help
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser = get_parser_from_group(parser, self.group)
@@ -71,17 +75,19 @@ class Option(_TermkitArgument):
 
 
 class Flag(_TermkitArgument):
-    _ignored_params = ["flags", "type", "group"]
+    _ignored_params = ["flags", "type", "group", "help"]
 
     def __init__(
         self,
         *flags: str,
         store: Optional[typing.Any] = True,
         group: Optional[_TermkitGroup] = None,
+        help: Optional[str] = None,
     ):
         self.flags = flags
         self.type = None
         self.group = group
+        self.help = help
         if store is True:
             self.action = "store_true"
         if store is False:

@@ -56,6 +56,7 @@ class ArgumentHandler:
                 elif typing.get_origin(param.annotation) is typing.Annotated:
                     _type, option = typing.get_args(param.annotation)
                     if isinstance(option, _TermkitArgument):
+                        param_help = option.help if option.help is not None else param_help
                         option._populate(self.parser, dest=param_name, help=param_help)
 
             # f(param : <annotation> = <default>)
