@@ -70,7 +70,7 @@ class TestCore(TestCase):
         usage: my-app [-h] COMMAND ...
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
 
         Commands:
           command-2
@@ -87,7 +87,7 @@ class TestCore(TestCase):
         usage: my-app command [-h]
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
         """
         )
 
@@ -117,7 +117,7 @@ class TestCore(TestCase):
         usage: my-app [-h] COMMAND ...
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
 
         Commands:
           sub-app .... First line help
@@ -136,7 +136,7 @@ class TestCore(TestCase):
         Second line help
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
 
         Commands:
           func .... First line from docstring
@@ -157,7 +157,7 @@ class TestCore(TestCase):
         Second line from docstring
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
         """
         )
 

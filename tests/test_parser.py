@@ -46,7 +46,7 @@ class TestArgumentHandler(TestCase):
           name
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
         """
         )
 
@@ -67,7 +67,7 @@ class TestArgumentHandler(TestCase):
         usage: app-name func [-h] [--value VALUE]
 
         Options:
-          -h, --help     show this help message and exit
+          -h, --help     Show this help message and exit
           --value VALUE
         """
         )
@@ -99,7 +99,7 @@ class TestArgumentHandler(TestCase):
           value2      With custom help
 
         Options:
-          -h, --help  show this help message and exit
+          -h, --help  Show this help message and exit
         """
         )
 
@@ -129,7 +129,7 @@ class TestArgumentHandler(TestCase):
         usage: app-name func [-h] [-v VALUE] -b STR
 
         Options:
-          -h, --help         show this help message and exit
+          -h, --help         Show this help message and exit
           -v, --value VALUE
           -b STR             With custom help
         """

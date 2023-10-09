@@ -16,10 +16,13 @@ __BUILTIN_TYPES__ = [str, int, float, complex, bool]
 
 class TermkitParser(argparse.ArgumentParser):
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs, add_help=False)
 
         self._optionals.title = "Options"
         self._positionals.title = "Positionals"
+
+        self.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
+                          help='Show this help message and exit')
 
         if kwargs.get("formatter_class", None) is None:
             self.formatter_class = TermkitDefaultFormatter
