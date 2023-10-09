@@ -99,3 +99,23 @@ class Flag(_TermkitArgument):
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser = get_parser_from_group(parser, self.group)
         parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help)
+
+
+class CounterFlag(_TermkitArgument):
+    _ignored_params = ["flags", "type", "group"]
+
+    def __init__(
+        self,
+        *flags: str,
+        store: Optional[typing.Any] = True,
+        group: Optional[_TermkitGroup] = None,
+    ):
+        self.flags = flags
+        self.type = None
+        self.group = group
+
+    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
+        parser = get_parser_from_group(parser, self.group)
+        parser.add_argument(
+            *sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help, default=0, action="count"
+        )
