@@ -4,6 +4,7 @@ SPDX-License-Identifier: MIT
 """
 
 import argparse
+import enum
 import typing
 from abc import abstractmethod
 from typing import Optional
@@ -11,8 +12,14 @@ from typing import Optional
 from termkit.groups import _TermkitGroup, get_parser_from_group
 
 
+class NARGS(enum.Enum):
+    ONE_OR_DEFAULT = "?"
+    ZERO_OR_MANY = "*"
+    ONE_OR_MANY = "+"
+
+
 class _TermkitArgument:
-    _ignored_params = ["flags", "group", "help"]
+    _ignored_params = ["flags", "group"]
 
     @abstractmethod
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
@@ -32,15 +39,13 @@ class Positional(_TermkitArgument):
         self,
         type: Optional[type] = str,
         metavar: Optional[str] = None,
-        nargs: Optional[typing.Union[int, str]] = None,
+        nargs: Optional[typing.Union[int, NARGS]] = None,
         choices: Optional[typing.Container] = None,
-        help: Optional[str] = None,
     ):
         self.type = type
         self.metavar = metavar
         self.nargs = nargs
         self.choices = choices
-        self.help = help
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser.add_argument(dest, **self.argparse_params, help=help)
@@ -55,9 +60,8 @@ class Option(_TermkitArgument):
         required: bool = False,
         default: Optional[typing.Any] = None,
         group: Optional[_TermkitGroup] = None,
-        nargs: Optional[typing.Union[int, str]] = None,
+        nargs: Optional[typing.Union[int, NARGS]] = None,
         choices: Optional[typing.Container] = None,
-        help: Optional[str] = None,
     ):
         self.flags = flags
         self.type = type
@@ -67,7 +71,6 @@ class Option(_TermkitArgument):
         self.default = default
         self.group = group
         self.choices = choices
-        self.help = help
 
     def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
         parser = get_parser_from_group(parser, self.group)
@@ -75,19 +78,17 @@ class Option(_TermkitArgument):
 
 
 class Flag(_TermkitArgument):
-    _ignored_params = ["flags", "type", "group", "help"]
+    _ignored_params = ["flags", "type", "group"]
 
     def __init__(
         self,
         *flags: str,
         store: Optional[typing.Any] = True,
         group: Optional[_TermkitGroup] = None,
-        help: Optional[str] = None,
     ):
         self.flags = flags
         self.type = None
         self.group = group
-        self.help = help
         if store is True:
             self.action = "store_true"
         if store is False:
