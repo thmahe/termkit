@@ -21,8 +21,9 @@ class TermkitParser(argparse.ArgumentParser):
         self._optionals.title = "Options"
         self._positionals.title = "Positionals"
 
-        self.add_argument('-h', '--help', action='help', default=argparse.SUPPRESS,
-                          help='Show this help message and exit')
+        self.add_argument(
+            "-h", "--help", action="help", default=argparse.SUPPRESS, help="Show this help message and exit"
+        )
 
         if kwargs.get("formatter_class", None) is None:
             self.formatter_class = TermkitDefaultFormatter
