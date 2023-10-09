@@ -35,5 +35,5 @@ def get_param_help(doc: str, dest: str) -> str:
     for line in doc.splitlines():
         pre = f":param {dest}:"
         if pre == line[: len(pre)]:
-            return line[len(pre) :].strip()
+            return '\n  '.join(list(map(lambda o: o.strip(), line[len(pre) :].replace('\\n', '\n').splitlines())))
     return ""
