@@ -1,7 +1,8 @@
 <p align="center">
-    <img alt="" title="Termkit" src="docs/images/banner.png#gh-dark-mode-only" style="text-indent: -10000px" width="450">
-    <img alt="" title="Termkit" src="https://gist.github.com/thmahe/749542a8ec97af9f20a476699e41b7c3/raw/dc6e249d08d65da3a0f6ba95ae09314e298a3583/banner_light.png#gh-light-mode-only" width="450">
+    <img alt="" title="Termkit" src="docs/images/banner.png#gh-dark-mode-only" width="450">
+    <img alt="" title="Termkit" src="https://raw.githubusercontent.com/thmahe/termkit/master/docs/images/banner_light.png#gh-light-mode-only" width="450">
 </p>
+<p></p>
 <div align="center">
   <b><i>Command Line Tools with... ease.</i></b>
 <hr>
