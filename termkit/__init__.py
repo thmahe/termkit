@@ -10,4 +10,4 @@ from termkit.arguments import Positional  # noqa: F401
 from termkit.arguments import NARGS, CounterFlag, Flag, Option  # noqa: F401
 from termkit.core import Termkit  # noqa: F401
 from termkit.groups import ArgumentGroup, MutuallyExclusiveGroup  # noqa: F401
-from termkit.input import ask, ask_secret  # noqa: F401
+from termkit.prompt import Prompt  # noqa: F401
