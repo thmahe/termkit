@@ -12,10 +12,13 @@ from typing import Optional
 from termkit.groups import _TermkitGroup, get_parser_from_group
 
 
-class NARGS(enum.Enum):
+class Nargs(enum.Enum):
     ONE_OR_DEFAULT = "?"
     ZERO_OR_MANY = "*"
     ONE_OR_MANY = "+"
+
+    def __get__(self, instance, owner):
+        return self.value
 
 
 class _TermkitArgument:
@@ -39,7 +42,7 @@ class Positional(_TermkitArgument):
         self,
         type: Optional[type] = str,
         metavar: Optional[str] = None,
-        nargs: Optional[typing.Union[int, NARGS]] = None,
+        nargs: Optional[typing.Union[int, str]] = None,
         choices: Optional[typing.Container] = None,
     ):
         self.type = type
@@ -60,7 +63,7 @@ class Option(_TermkitArgument):
         required: bool = False,
         default: Optional[typing.Any] = None,
         group: Optional[_TermkitGroup] = None,
-        nargs: Optional[typing.Union[int, NARGS]] = None,
+        nargs: Optional[typing.Union[int, str]] = None,
         choices: Optional[typing.Container] = None,
     ):
         self.flags = flags
