@@ -33,6 +33,8 @@ def get_parser_from_group(parser: argparse.ArgumentParser, group: typing.Optiona
             argparse_group = parser.add_argument_group(group.name, group.description)
             # Add new group before options
             parser._action_groups.insert(-2, parser._action_groups.pop(-1))
+            # Keep positionals in top group
+            parser._action_groups.insert(0, parser._action_groups.pop(parser._action_groups.index(parser._positionals)))
             group.register(parser, argparse_group)
         return group.reg.get(id(parser))
 
