@@ -7,7 +7,7 @@ import argparse
 import enum
 import typing
 from abc import abstractmethod
-from typing import Optional
+from typing import Optional, Any
 
 from termkit.groups import _TermkitGroup, get_parser_from_group
 
@@ -25,7 +25,7 @@ class _TermkitArgument:
     _ignored_params = ["flags", "group"]
 
     @abstractmethod
-    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
+    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str, default: Any = None):
         ...
 
     @property
@@ -50,7 +50,7 @@ class Positional(_TermkitArgument):
         self.nargs = nargs
         self.choices = choices
 
-    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
+    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str, default: Any = None):
         parser.add_argument(dest, **self.argparse_params, help=help)
 
 
@@ -61,7 +61,6 @@ class Option(_TermkitArgument):
         type: Optional[type] = str,
         metavar: Optional[str] = None,
         required: bool = False,
-        default: Optional[typing.Any] = None,
         group: Optional[_TermkitGroup] = None,
         nargs: Optional[typing.Union[int, str]] = None,
         choices: Optional[typing.Container] = None,
@@ -71,13 +70,12 @@ class Option(_TermkitArgument):
         self.nargs = nargs
         self.metavar = metavar
         self.required = required
-        self.default = default
         self.group = group
         self.choices = choices
 
-    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
+    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str, default: Any = None):
         parser = get_parser_from_group(parser, self.group)
-        parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help)
+        parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help, default=default)
 
 
 class Flag(_TermkitArgument):
@@ -100,9 +98,9 @@ class Flag(_TermkitArgument):
             self.action = "store_const"
             self.const = store
 
-    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
+    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str, default: Any = None):
         parser = get_parser_from_group(parser, self.group)
-        parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help)
+        parser.add_argument(*sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help, default=default)
 
 
 class CounterFlag(_TermkitArgument):
@@ -118,8 +116,8 @@ class CounterFlag(_TermkitArgument):
         self.type = None
         self.group = group
 
-    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str):
+    def _populate(self, parser: argparse.ArgumentParser, dest: str, help: str, default: Any = None):
         parser = get_parser_from_group(parser, self.group)
         parser.add_argument(
-            *sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help, default=0, action="count"
+            *sorted(self.flags, key=len), **self.argparse_params, dest=dest, help=help, default=default, action="count"
         )

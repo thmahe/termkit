@@ -136,3 +136,29 @@ class TestArgumentHandler(TestCase):
         )
 
         self.assertEqual(output, runner.captured_output)
+
+    def test_explicit_option_default(self):
+        app = Termkit("app-name")
+
+        @app.command()
+        def func(
+            value: Annotated[str, Option("--value", "-v")] = 10,
+        ):
+            """
+
+            :param value:
+            :param value2: With custom help
+            :return:
+            """
+            print(value)
+
+        runner = TermkitRunner(app)
+        runner.run("func", "--value", "Hello")
+
+        output = textwrap.dedent(
+            """\
+        Hello
+        """
+        )
+
+        self.assertEqual(output, runner.captured_output)

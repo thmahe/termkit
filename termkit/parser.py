@@ -7,7 +7,7 @@ import argparse
 import inspect
 import typing
 
-from termkit.arguments import _TermkitArgument
+from termkit.arguments import _TermkitArgument, Positional
 from termkit.formatters import TermkitDefaultFormatter
 from termkit.utils import get_param_help
 
@@ -66,6 +66,10 @@ class ArgumentHandler:
             else:
                 if param.annotation in __BUILTIN_TYPES__:
                     self._populate_implicit_option(param_name, param_type, help=param_help)
+                elif typing.get_origin(param.annotation) is typing.Annotated:
+                    _type, option = typing.get_args(param.annotation)
+                    if isinstance(option, _TermkitArgument):
+                        option._populate(self.parser, dest=param_name, help=param_help, default=param.default)
 
     def _populate_implicit_positional(self, param_name: str, param_type: type, help: str):
         self.parser.add_argument(param_name, type=param_type, help=help)
